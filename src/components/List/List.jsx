@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {ListWrapper, TasksList} from './List.styles';
 import Input from "../UI/Input/Input";
 import Task from "../Task/Task";
@@ -8,15 +8,20 @@ import {ButtonAddStyled} from "../UI/ButtonAdd/ButtonAdd.styles";
 
 
 export const List = () => {
-    const [tasks, setTasks] = useState([]);
+    const storedItems = JSON.parse(localStorage.getItem('tasks'))
+    const [tasks, setTasks] = useState(storedItems);
     const [taskDescription, setTaskDescription] = useState('');
+
+    useEffect(() => {
+        localStorage.setItem('tasks', JSON.stringify(tasks))
+    }, [tasks])
 
     const addTodo = todo => {
         const id = nanoid();
-        const date = new Date();
-        const newTask = {id, text: taskDescription, completed: false, date};
+        const date = new Date().toLocaleDateString();
+        const time = new Date().toLocaleTimeString();
+        const newTask = {id, text: taskDescription, completed: false, date, time};
         setTasks((prev) => [...prev,newTask]);
-        // console.log(date)
     }
 
     const removeTask = id => {
@@ -57,6 +62,7 @@ export const List = () => {
                         toggleComplete={toggleComplete}
                         handleChange={handleChange}
                         date={item.date}
+                        time={item.time}
                     />
                 ))}
             </TasksList>

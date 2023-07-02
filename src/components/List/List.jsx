@@ -4,6 +4,7 @@ import Input from "../UI/Input/Input";
 import Task from "../Task/Task";
 import {nanoid} from "nanoid";
 import {ButtonAddStyled} from "../UI/ButtonAdd/ButtonAdd.styles";
+import SelectSort from "../UI/Select/SelectSort";
 
 
 
@@ -11,6 +12,8 @@ export const List = () => {
     const storedItems = JSON.parse(localStorage.getItem('tasks'))
     const [tasks, setTasks] = useState(storedItems);
     const [taskDescription, setTaskDescription] = useState('');
+    const [selectedSort, setSelectedSort] = useState('');
+    const [searchQuery, setSearchQuery] = useState('')
 
     useEffect(() => {
         localStorage.setItem('tasks', JSON.stringify(tasks))
@@ -41,6 +44,10 @@ export const List = () => {
         ))
     }
 
+    const sortTasks = (sort) => {
+        setSelectedSort(sort);
+        setTasks([...tasks].sort((a, b) => a[sort].localeCompare(b[sort])));
+    }
 
     return (
         <ListWrapper>
@@ -48,24 +55,33 @@ export const List = () => {
             <ButtonAddStyled onClick={addTodo}>
                 Добавить
             </ButtonAddStyled>
-            <div>
-                <select>
-                    <option value="value1">По названию</option>
-                </select>
-            </div>
-            <TasksList>
-                {tasks.map((item) => (
-                    <Task
-                        task={item}
-                        key={item.id}
-                        remove={removeTask}
-                        toggleComplete={toggleComplete}
-                        handleChange={handleChange}
-                        date={item.date}
-                        time={item.time}
-                    />
-                ))}
-            </TasksList>
+            <hr style={{margin: "10px"}}/>
+            <SelectSort
+                value={selectedSort}
+                onChange={sortTasks}
+                defaultOption={"Сортировка по: "}
+                options={[
+                    {value: 'text', name: 'По названию'}
+                ]}
+            />
+            {tasks.length
+                ?
+                <TasksList >
+                    {tasks.map((item) => (
+                        <Task
+                            task={item}
+                            key={item.id}
+                            remove={removeTask}
+                            toggleComplete={toggleComplete}
+                            handleChange={handleChange}
+                            date={item.date}
+                            time={item.time}
+                        />
+                    ))}
+                </TasksList>
+                :
+                <h1 style={{textAlign: "center"}}>Таски не найдены!</h1>
+            }
         </ListWrapper>
     );
 };

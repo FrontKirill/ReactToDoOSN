@@ -13,7 +13,6 @@ export const List = () => {
     const [tasks, setTasks] = useState(storedItems);
     const [taskDescription, setTaskDescription] = useState('');
     const [selectedSort, setSelectedSort] = useState('');
-    const [searchQuery, setSearchQuery] = useState('')
 
     useEffect(() => {
         localStorage.setItem('tasks', JSON.stringify(tasks))
